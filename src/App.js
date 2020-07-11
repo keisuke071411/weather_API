@@ -3,10 +3,12 @@ import './App.css';
 import axios from 'axios';
 
 const App = () => {
+  const [cityWeatherApi,setCityWeatherApi] = useState('http://api.openweathermap.org/data/2.5/weather?lat=35.5040531&lon=138.6485793&APPID=c891e50413bec9cb664f40eeab5d13b1');
+
   const weather = async () => {
     try {
       //GETメソッドを使用してAPIを取得
-      const weatherApi = await axios.get( 'http://api.openweathermap.org/data/2.5/weather?lat=33.5900446&lon=130.3983283&APPID=c891e50413bec9cb664f40eeab5d13b1' );
+      const weatherApi = await axios.get( cityWeatherApi );
       
       //'result'に取得したAPIの中の「今日の天気データ」を代入
       const result = weatherApi["data"]["weather"][0]["main"];
@@ -62,23 +64,38 @@ const App = () => {
   }
 
   //ラジオボタンの切り替えをするためのstate, 関数
-  const [val, setVal] = useState('a');
+  const [radio, setRadio] = useState( 'Tokyo' );
+
+  //ラジオボタンの切り替えをによって取得するAPIを変更する関数
   const handleClick = (e) => {
-    setVal(e.target.value);
+    setRadio(e.target.value);
+    switch (e.target.value) {
+      case 'Tokyo':
+      setCityWeatherApi('http://api.openweathermap.org/data/2.5/weather?lat=35.5040531&lon=138.6485793&APPID=c891e50413bec9cb664f40eeab5d13b1');
+      break;
+    
+      case 'U.S.A':
+      setCityWeatherApi('http://api.openweathermap.org/data/2.5/weather?lat=34.05&lon=-118.24&APPID=c891e50413bec9cb664f40eeab5d13b1');
+      break;
+
+      case 'Fukuoka':
+      setCityWeatherApi('http://api.openweathermap.org/data/2.5/weather?lat=33.5900446&lon=130.3983283&APPID=c891e50413bec9cb664f40eeab5d13b1');
+      break;
+    }
   }
   
   return (
     <>
-    <div className='radio-box'>
-      <input type='radio' value='a' onChange={ handleClick } checked={val == 'a'} />Tokyo
-      <input type='radio' value='b' onChange={ handleClick } checked={val == 'b'} />Kyoto
-      <input type='radio' value='c' onChange={ handleClick } checked={val == 'c'} />Fukuoka
-    </div>
-    <button onClick={ () => weather() }>天気を確認する</button>
-    <div className='result-box'>
-      <h1>今日の天気は？？</h1>
-      <img src= { todaysWeather }/>
-    </div>
+      <div className='radio-box'>
+        <input type='radio' value='Tokyo' onChange={ handleClick } checked={radio == 'Tokyo'} />Tokyo
+        <input type='radio' value='U.S.A' onChange={ handleClick } checked={radio == 'U.S.A'} />U.S.A
+        <input type='radio' value='Fukuoka' onChange={ handleClick } checked={radio == 'Fukuoka'} />Fukuoka
+      </div>
+      <button onClick={ () => weather() }>天気を確認する</button>
+      <div className='result-box'>
+        <h1>今日の天気は？？</h1>
+        <img src= { todaysWeather }/>
+      </div>
     </>
   );
 }
